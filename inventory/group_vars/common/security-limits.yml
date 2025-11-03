@@ -1,0 +1,16 @@
+linux_security_limits:
+  - domain: "*"
+    limit_type: "-"
+    limit_item: "nproc"
+    value: "500000"
+
+  - domain: "*"
+    limit_type: "-"
+    limit_item: "nofile"
+    value: "{{ [ (ansible_memtotal_mb | int / 1024 * 500000) | int, 1048576 ] | max }}"
+
+
+  - domain: "root"
+    limit_type: "-"
+    limit_item: "nofile"
+    value: "{{ [ (ansible_memtotal_mb | int / 1024 * 500000) | int, 1048576 ] | max }}"

@@ -1,0 +1,4 @@
+linux_etc_hosts:
+  - line: "192.168.149.130 artifacts.test.vasl"             ## 192.168.149.130 : Devops Machine
+  - line: "192.168.149.130 codebase.test.vasl"              ## 192.168.149.130 : Devops Machine
+  - line: "192.168.149.130 notif.test.vasl" 

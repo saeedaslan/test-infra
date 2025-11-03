@@ -1,0 +1,90 @@
+kernel_parameter_list:
+## File Descriptors:
+  - name: fs.file-max
+    value: "{{ (ansible_memtotal_mb | int / 1024 * 150000) | int }}" # e.g: 50000000
+    state: present
+  - name: fs.nr_open
+    value: "{{ [ (ansible_memtotal_mb | int / 1024 * 500000) | int, 1048576 ] | max }}" # e.g: 2000000
+    state: present
+  - name: fs.inotify.max_queued_events  # Default: 16384 Recommended: 32768–65536.
+    value: "65536"
+    state: present
+  - name: fs.inotify.max_user_instances # Needed for tools like kubelet, IDEs, systemd. Recommended: 256–1024 depending on how many services run per user.
+    value: '1024'
+    state: present
+  - name: fs.inotify.max_user_watches # Crucial for Kubernetes, IDEs, CI agents. Recommended: 524288–2097152 depending on number of files in your projects.
+    value: '2000100'
+    state: present
+## Networking
+  # Common Configurations
+  - name: net.ipv4.ip_forward
+    value: 1
+    state: present
+  - name: net.ipv4.conf.all.arp_filter
+    value: 1
+    state: present
+  - name: net.ipv4.conf.default.arp_filter
+    value: 1
+    state: present
+  - name: net.ipv4.icmp_echo_ignore_all
+    value: 0
+    state: present
+  - name: net.ipv4.tcp_max_tw_buckets # Assuming nodes have 16–64 GB RAM
+    value: 1440000
+    state: present
+  - name: net.ipv4.tcp_fin_timeout
+    value: 15
+    state: present
+  - name: net.ipv4.tcp_tw_reuse
+    value: 1
+    state: present
+  - name: net.ipv4.ip_local_port_range
+    value: '1024 65535'
+    state: present
+
+  # Increase connection limits
+  - name: net.core.somaxconn
+    value: 65530
+    state: present
+  - name: net.ipv4.tcp_max_syn_backlog
+    value: 8012
+    state: present
+
+  # Tune buffer sizes - Recommended Settings (for 16–64GB RAM)
+  - name: net.core.rmem_max
+    value: 16777216                # 16MB
+    state: present
+  - name: net.core.wmem_max
+    value: 16777216                # 16MB
+    state: present
+  - name: net.ipv4.tcp_mem
+    value: '786432 2097152 3145728'
+    state: present
+  - name: net.ipv4.tcp_rmem
+    value: '4096 87380 16777216'
+    state: present
+  - name: net.ipv4.tcp_wmem
+    value: '4096 65536 16777216'
+    state: present
+  # Disable unused network protocols
+  - name: net.ipv6.conf.all.disable_ipv6
+    value: 1
+    state: present
+  - name: net.ipv4.ip_nonlocal_bind
+    value: 1
+    state: present
+
+## Memory
+  # Reduce swap usage for better performance
+  - name: vm.max_map_count
+    value: 524288
+    state: present
+  - name: vm.swappiness
+    value: 30
+    state: present
+  - name: vm.dirty_ratio
+    value: 20
+    state: present
+  - name: vm.dirty_background_ratio
+    value: 10
+    state: present

@@ -1,0 +1,20 @@
+---
+## due to migration we have to disable all docker proxy settings in all hosts manually
+docker_conf_systemd_proxy_enabled: false
+# docker_conf_systemd_proxy: 'http://172.31.13.8:8612'
+# docker_conf_systemd_no_proxy: 'localhost,127.0.0.1'
+
+docker_compose_enabled: false
+
+docker_conf_daemon_json:
+  max-concurrent-downloads: 30
+  max-concurrent-uploads: 30
+  storage-driver: "overlay2"
+  log-driver: "local"
+  log-opts:
+    max-size: "1024m"
+    max-file: "5"
+
+docker_conf_permissioned_users:
+  - "{{ ansible_user }}"
+  - saeed

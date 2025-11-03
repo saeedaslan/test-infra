@@ -1,0 +1,29 @@
+linux_common_users_list:
+  - name: ansible
+    comment: 'Ansible'
+    password: "{{ vault_linux_users_ansible_password }}"
+    sudoer:
+      state: 'present'
+      runas: 'ALL:ALL'
+    authorized_keys:
+      - key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHVSHo8EPHhbRaCF/nfYpX4c0piEksBl52xwZpjY8sCT ansible@vaslco'
+      - key: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCsg7xrvOxlwKh76rUzyBzBD1QbtUQ6HJvxp3BuDDTiVSWoTUlvtY1ahd4E1dyJAK1lQ9XEzulGK9uXd/y+GXS+433x+NRkBjhdJXwGTn+aFSNc0/VmWSzdiRQz/jJXlNhyDiQl71bv21jnJkIM6gZvmd8OhbNXBvf/wJLUVT9ELZj60DSJqgVg2FB39zmGXmjTeu9hBfxzFC1kNxz6n/CravYfWRxJU7R2+2vewqCLC3CNsOTHZFHJ8tHatwQjvzXhke+8yY/D3HPJmKVX+rM3PZMi00+BhIj5KahepA6E89iWJKwRIEHFdpLYb6ken01s6jGFC2St7RBx90shjZUKY2Xz/lEpNnSH4+gavUD1qjVATGtO43tKopwNhhWmOUJHgbrcQVAZ9RJ3UAEENBOS7OHZHN2nW8P64NtzbWoT470vDi8pucUta81dfHcPpaVW3VSVsFZNYZ3fzrp6iydAOB4beKlQqhpOKrWw9uzEzQXtHNqW0F4DSJYbvBii42s= ansible@asus-vasl'
+
+  - name: jumpserver
+    comment: 'Jumpserver'
+    password: "{{ vault_linux_users_jumpserver_password }}"
+    sudoer:
+      state: 'present'
+      runas: 'ALL:ALL'
+      commands:
+        - /usr/bin/ls
+    authorized_keys:
+      - key: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDX4Olrj01tKzGiOWvs4BuW3c0b5jBJ+c6JVdPI6zzOE9HOQO8CMLUYGzUUm1sIf3jnYpkD+zvkJEr/oF5RuyNnkfVmyKDOhhg31u9fZgG2nviELFLHke26BzefsovfJDzM0DHwkzscAQLph9dcCcmAGToHrFqBEtraMWgQs/BcSIHK93nc93Ner4M8DZ9kaQN68HbKsOqj/EPdnniVQ8a7Dm89IG73tV4fpKkBkXbvfAcKaC3v3RohaX6EPOXtn5d21fian6L9eAlcLRps9MSiC2M9wV3Nganeiwc5/Oua3vXdm2qW2wJ85zC6/1KDjZ4/4qPO9FCw0NncolzwkXcMHJ+E3SJBgpTQJTvpEV7g7zwNj1pCGOP1k573gI1zcNzx0ryILIN9Rlmmr9LrF/5jBCVhSFop7La7OZCfkuhm0OLX7SI9GE3oI7ee8XCL7dA243Xvd1NEQF0b1NzWJQt+fDD2+yTqVpzgZNsozzsdwddU5hcmxU8WMewzBtgV4SU= jumpserver@vasl'
+
+  - name: saeed
+    comment: 'saeed'
+    sudoer:
+      state: 'present'
+      runas: 'ALL:ALL'
+    authorized_keys:
+      - key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDrtK48Vp8N7IYSp9XKKJ7Dpsyvb5LGGv5jOj8f+h56I saeed-aslani@saeed'
