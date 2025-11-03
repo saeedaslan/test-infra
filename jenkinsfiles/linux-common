@@ -1,0 +1,81 @@
+/* groovylint-disable LineLength, NestedBlockDepth */
+pipeline {
+  agent { label 'vasl-hq-ansible-controller' }
+
+  options {
+    timestamps()
+    timeout(time: 35, unit: 'MINUTES')
+  }
+
+  environment {
+    CODEBASE_URL        = 'codebase.vaslapp.com'
+    CODEBASE_CRED_ID    = 'gitlab-jenkins-maintainer-account'
+
+    ANSIBLE_VENV        = '/home/jenkins/ansible-venv'
+
+    PLAYBOOK_NAME       = 'linux-common'
+    INVENTORY_PATH      = 'inventory'
+
+    MM_INVENTORY        = 'FanAvaran APIhub - Seyed Khandan Zeus'
+    MM_CHANNEL          = 'jenkins@cicd'
+  }
+
+  stages {
+
+    stage('Clone Playbook') {
+      steps {
+        echo "########################### Cloning ${env.PLAYBOOK_NAME} playbook"
+        checkout([
+          $class: 'GitSCM',
+          branches: [[ name: "*/main" ]],
+          extensions: [[
+            $class: 'RelativeTargetDirectory',
+            relativeTargetDir: "playbooks/${env.PLAYBOOK_NAME}"
+          ]],
+          userRemoteConfigs: [[
+            url: "https://${env.CODEBASE_URL}/devops/vasl/ansible/playbooks/${env.PLAYBOOK_NAME}.git",
+            credentialsId: env.CODEBASE_CRED_ID
+          ]]
+        ])
+      }
+    }
+
+    stage('Install Roles') {
+      steps {
+        echo "########################### Installing Ansible Roles from requirements.yml file"
+        withCredentials([usernamePassword(
+          credentialsId: env.CODEBASE_CRED_ID,
+          usernameVariable: 'GIT_USER',
+          passwordVariable: 'GIT_PASS'
+        )]) {
+          sh """
+            echo "machine ${env.CODEBASE_URL}" > ~/.netrc
+            echo "  login ${GIT_USER}" >> ~/.netrc
+            echo "  password ${GIT_PASS}" >> ~/.netrc
+            chmod 600 ~/.netrc
+
+            . ${env.ANSIBLE_VENV}/bin/activate
+            ansible-galaxy install --force \
+              -r playbooks/${PLAYBOOK_NAME}/requirements.yml \
+              -p roles
+
+          """
+        }
+      }
+    }
+
+    stage('Run Playbook') {
+      steps {
+        echo "########################### Executing ${env.PLAYBOOK_NAME} playbook"
+        sh """
+          cp playbooks/${PLAYBOOK_NAME}/ansible.cfg .
+          . ${env.ANSIBLE_VENV}/bin/activate
+          ansible-playbook \
+            -i ${env.INVENTORY_PATH} \
+            playbooks/${env.PLAYBOOK_NAME}/playbook.yml \
+            ${params.ANSIBLE_PARAMS}
+        """
+      }
+    }
+  }
+}
