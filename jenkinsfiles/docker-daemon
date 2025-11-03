@@ -1,6 +1,6 @@
 /* groovylint-disable LineLength, NestedBlockDepth */
 pipeline {
-  agent { label 'vasl-hq-ansible-controller' }
+  agent { label 'build-agent' }
 
   options {
     timestamps()
@@ -8,15 +8,15 @@ pipeline {
   }
 
   environment {
-    CODEBASE_URL        = 'codebase.vaslapp.com'
-    CODEBASE_CRED_ID    = 'gitlab-jenkins-maintainer-account'
+    CODEBASE_URL        = 'github.com'
+    CODEBASE_CRED_ID    = 'github-cread'
 
-    ANSIBLE_VENV        = '/home/jenkins/ansible-venv'
+    ANSIBLE_VENV        = '/home/jenkins-slave/ansible-venv'
 
     PLAYBOOK_NAME       = 'docker-daemon'
     INVENTORY_PATH      = 'inventory'
 
-    MM_INVENTORY        = 'FanAvaran APIhub - Seyed Khandan Zeus'
+    MM_INVENTORY        = 'Test skh - 160'
     MM_CHANNEL          = 'jenkins@cicd'
   }
 
